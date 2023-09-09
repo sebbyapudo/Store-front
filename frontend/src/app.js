@@ -1,8 +1,21 @@
 import HomeScreen from "./screens/HomeScreen.js";
+import ProductScreen from "./screens/Error404Screen.js";
+import { parseRequestUrl } from "./utils.js";
+import Error404Screen from "./screens/Error404Screen.js";
 
-const router = () => {
-  const main = document.getElementById("main_container");
-  main.innerHTML = HomeScreen.render();
+const routes = {
+  "/": HomeScreen,
+  "/product/:id": ProductScreen,
 }
 
-window.addEventListener("load", router)
+const router = () => {
+  const request = parseRequestUrl();
+  const parseUrl = (request.resource ? `/${request.resource}`: '/') + (request.id ? `/:id`: '') + (request.verb ? `/${request.verb}`: '');
+  const screen = routes[parseUrl] ? routes[parseUrl] : Error404Screen;
+
+  const main = document.getElementById("main_container");
+  main.innerHTML = screen.render();
+}
+
+window.addEventListener("load", router);
+window.addEventListener("hashchange", router);
